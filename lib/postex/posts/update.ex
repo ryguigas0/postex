@@ -10,8 +10,14 @@ defmodule Postex.Posts.Update do
         {:error, :not_found}
 
       post_to_update ->
-        Ecto.Changeset.change(post_to_update, likes: new_likes, shares: new_shares)
-        |> Repo.update()
+        case Ecto.Changeset.change(post_to_update, likes: new_likes, shares: new_shares)
+             |> Repo.update() do
+          {:ok, updated_post} ->
+            {:ok, updated_post}
+
+          {:error, _invalid_changeset} ->
+            {:error, :invalid_data}
+        end
     end
   end
 end
