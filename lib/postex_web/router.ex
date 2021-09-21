@@ -16,7 +16,7 @@ defmodule PostexWeb.Router do
       only: [
         :create,
         :show,
-        # :delete, TODO: add an route for post deletion
+        :delete,
         # :edit, TODO: add an route for post editing
         # :index TODO: add an response with the content, likes and shares of the 10 most recent posts
       ]

@@ -18,4 +18,10 @@ defmodule PostexWeb.PostView do
       id: post.id
     }
   end
+
+  def render("delete.json", _assigns) do
+    %{
+      message: "Post was deleted!"
+    }
+  end
 end
