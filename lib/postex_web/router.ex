@@ -17,8 +17,8 @@ defmodule PostexWeb.Router do
         :create,
         :show,
         :delete,
-        # :edit, TODO: add an route for post editing
-        # :index TODO: add an response with the content, likes and shares of the 10 most recent posts
+        :update, # TODO: add an route for post updating
+        # :index # TODO: add an response with the content, likes and shares of the 10 most recent posts
       ]
   end
 
