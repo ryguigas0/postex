@@ -1,4 +1,4 @@
-defmodule PostexWeb.PostController do
+defmodule PostexWeb.PostsController do
   use PostexWeb, :controller
 
   alias Postex.{Post, Posts}
@@ -7,28 +7,29 @@ defmodule PostexWeb.PostController do
     with {:ok, post} <- Posts.Create.call(%Post{content: content, likes: 0, shares: 0}) do
       conn
       |> put_status(201)
-      |> json(%{message: "Post created!", id: post.id})
+      |> put_view(PostexWeb.PostView)
+      |> render("create.json", post: post)
     else
-      {:error, _changeset} -> json(conn, %{message: "Error creating post!"})
+      {:error, _changeset} ->
+        conn
+        |> put_status(400)
+        |> put_view(PostexWeb.ErrorView)
+        |> render("post400.json")
     end
   end
 
   def show(conn, %{"id" => post_id}) do
-    case Posts.Show.call(post_id) do
-      {:error, reason} ->
+    with {:ok, post} <- Posts.Show.call(post_id) do
+      conn
+      |> put_status(200)
+      |> put_view(PostexWeb.PostView)
+      |> render("show.json", post: post)
+    else
+      {:error, :not_found} ->
         conn
-        |> put_status(404)
-        |> json(%{message: reason})
-
-      {:ok, post} ->
-        conn
-        |> put_status(:ok)
-        |> json(%{
-          id: post.id,
-          content: post.content,
-          likes: post.likes,
-          shares: post.shares
-        })
+        |> put_status(:not_found)
+        |> put_view(PostexWeb.ErrorView)
+        |> render("post404.json")
     end
   end
 end

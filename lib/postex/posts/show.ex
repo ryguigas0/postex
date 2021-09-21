@@ -4,7 +4,7 @@ defmodule Postex.Posts.Show do
   def call(post_id) do
     case Repo.get(Post, post_id) do
       nil ->
-        {:error, "Post not found"}
+        {:error, :not_found}
 
       post ->
         {:ok, post}

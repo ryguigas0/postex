@@ -12,7 +12,14 @@ defmodule PostexWeb.Router do
     # verbo "/recurso", Controller, :handler
     get "/hello", HelloController, :index
 
-    resources "/posts", PostController, only: [:create, :show, :edit, :delete, :index]
+    resources "/posts", PostsController,
+      only: [
+        :create,
+        :show,
+        # :delete, TODO: add an route for post deletion
+        # :edit, TODO: add an route for post editing
+        # :index TODO: add an response with the content, likes and shares of the 10 most recent posts
+      ]
   end
 
   # Enables LiveDashboard only for development
