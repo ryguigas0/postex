@@ -5,7 +5,7 @@ defmodule PostexWeb.PostsController do
   alias Postex.{Post, Posts}
 
   def create(conn, %{"content" => content}) do
-    with {:ok, post} <- Posts.Create.call(%Post{content: content, likes: 0, shares: 0}) do
+    with {:ok, post} <- Posts.Create.call(%Post{content: content, likes: 0, shares: 0, edited: false}) do
       conn
       |> put_status(201)
       |> put_view(PostView)
@@ -51,6 +51,21 @@ defmodule PostexWeb.PostsController do
 
   def update(conn, %{"id" => post_id, "likes" => new_likes, "shares" => new_shares}) do
     with {:ok, updated_post} <- Posts.Update.call(post_id, likes: new_likes, shares: new_shares) do
+      conn
+      |> put_status(200)
+      |> put_view(PostView)
+      |> render("show.json", post: updated_post)
+    else
+      {:error, _invalid_changeset_or_not_found} ->
+        conn
+        |> put_status(400)
+        |> put_view(ErrorView)
+        |> render("post400.json")
+    end
+  end
+
+  def edit(conn, %{"id" => post_id, "content" => new_content}) do
+    with {:ok, updated_post} <- Posts.Edit.call(post_id, content: new_content) do
       conn
       |> put_status(200)
       |> put_view(PostView)

@@ -6,6 +6,7 @@ defmodule Postex.Post do
     field :content, :string
     field :likes, :integer
     field :shares, :integer
+    field :edited, :boolean
 
     timestamps()
   end
@@ -15,5 +16,6 @@ defmodule Postex.Post do
     post
     |> cast(updates, [:content], [:likes, :shares])
     |> validate_required([:content])
+    |> validate_length(:content, min: 1, max: 260)
   end
 end

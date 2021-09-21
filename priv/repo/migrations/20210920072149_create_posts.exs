@@ -6,6 +6,7 @@ defmodule Postex.Repo.Migrations.CreatePosts do
       add :content, :string
       add :likes, :integer
       add :shares, :integer
+      add :edited, :boolean
 
       timestamps()
     end

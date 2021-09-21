@@ -15,7 +15,8 @@ defmodule PostexWeb.PostView do
       content: post.content,
       likes: post.likes,
       shares: post.shares,
-      id: post.id
+      id: post.id,
+      edited: post.edited
     }
   end
 
