@@ -21,7 +21,7 @@ defmodule PostexWeb.PostsController do
 
   def delete(conn, %{"id" => post_id}) do
     with {:ok, _deleted_post} <- Postex.delete_post(post_id) do
-      response(conn, 201, "delete.json")
+      response(conn, 200, "delete.json")
     end
   end
 
@@ -33,7 +33,7 @@ defmodule PostexWeb.PostsController do
 
   def edit(conn, %{"id" => post_id, "content" => new_content}) do
     with {:ok, edited_post} <- Postex.edit_post(post_id, content: new_content) do
-      response(conn, 201, "show.json", post: edited_post)
+      response(conn, 200, "show.json", post: edited_post)
     end
   end
 
