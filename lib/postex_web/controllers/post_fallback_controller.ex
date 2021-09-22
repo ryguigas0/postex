@@ -16,4 +16,12 @@ defmodule PostexWeb.PostFallbackController do
     |> put_view(ErrorView)
     |> render("post404.json")
   end
+
+  def call(conn, {:error, :no_post}) do
+    conn
+    |> put_status(200)
+    |> json(%{
+      message: "No posts found!"
+    })
+  end
 end

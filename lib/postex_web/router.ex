@@ -21,7 +21,7 @@ defmodule PostexWeb.Router do
         :update,
         # Post edit -> update content value
         :edit,
-        # :index # TODO: add an response with the content, likes and shares of the 10 most recent posts
+        :index
       ]
   end
 

@@ -37,6 +37,16 @@ defmodule PostexWeb.PostsController do
     end
   end
 
+  def index(conn, %{"size" => size, "rule" => rule}) do
+    batch_size = size |> String.to_integer()
+
+    with {:ok, post_list} <- Postex.get_posts(batch_size, rule) do
+      if length(post_list) > 0 do
+        response(conn, 200, "show_many.json", post_list: post_list, rule: rule)
+      end
+    end
+  end
+
   defp response(conn, status, template, args \\ []) do
     conn
     |> put_status(status)
