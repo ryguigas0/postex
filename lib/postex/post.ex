@@ -2,11 +2,13 @@ defmodule Postex.Post do
   use Ecto.Schema
   import Ecto.Changeset
 
+  @primary_key {:id, :binary_id, autogenerate: true}
+
   schema "posts" do
     field :content, :string
-    field :likes, :integer
-    field :shares, :integer
-    field :edited, :boolean
+    field :likes, :integer, default: 0
+    field :shares, :integer, default: 0
+    field :edited, :boolean, default: false
 
     timestamps()
   end

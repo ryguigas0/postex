@@ -6,7 +6,7 @@ defmodule Postex.Posts.GetPosts do
   def call(batch_size, rule) when is_integer(batch_size) do
     post_list = rule |> get_query_by_rule() |> Repo.all() |> Enum.take(batch_size)
 
-    if length(post_list) == 0 do
+    if Enum.empty?(post_list) do
       {:error, :no_posts}
     else
       {:ok, post_list}

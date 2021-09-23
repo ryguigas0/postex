@@ -4,12 +4,11 @@ defmodule PostexWeb.PostsController do
   action_fallback PostexWeb.PostFallbackController
 
   alias PostexWeb.PostView
-  alias Postex.Post
 
   def create(conn, %{"content" => content}) do
     with {:ok, post} <-
-           Postex.create_post(%Post{content: content, likes: 0, shares: 0, edited: false}) do
-      response(conn, 201, "create.json", post: post)
+           Postex.create_post(content) do
+      response(conn, 201, "show.json", post: post)
     end
   end
 

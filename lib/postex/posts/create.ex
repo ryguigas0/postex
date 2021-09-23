@@ -1,15 +1,15 @@
 defmodule Postex.Posts.Create do
   alias Postex.{Post, Repo}
 
-  def call(params) do
+  def call(content) do
     result =
-      params
+      %Post{content: content}
       |> Post.changeset()
       |> Repo.insert()
 
     case result do
       {:ok, _post} -> result
-      {:error, _invalid_changeset} -> {:error, :invalid_data}
+      {:error, %Ecto.Changeset{valid?: false}} -> {:error, :invalid_data}
     end
   end
 end

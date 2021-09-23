@@ -3,13 +3,6 @@ defmodule PostexWeb.PostView do
 
   use PostexWeb, :view
 
-  def render("create.json", %{post: %Post{} = post}) do
-    %{
-      message: "Post was created!",
-      post_id: post.id
-    }
-  end
-
   def render("show.json", %{post: %Post{} = post}) do
     %{
       content: post.content,

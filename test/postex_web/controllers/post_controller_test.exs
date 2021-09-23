@@ -1,12 +1,12 @@
 defmodule PostexWeb.PostsControllerTest do
   use PostexWeb.ConnCase, async: true
 
-  describe "HTTP request tests that depends on id" do
+  describe "HTTP request tests that depends on id - " do
     test "GET /posts/:id finds a post with valid id", %{conn: conn} do
-      created_post = post(conn, "/posts", %{"content" => "This a test!"}) |> json_response(201)
+      created_post = post(conn, "/posts", content: "This a test!") |> json_response(201)
 
       resp =
-        get(conn, "/posts/#{created_post["post_id"]}")
+        get(conn, "/posts/#{created_post["id"]}")
         |> json_response(200)
 
       assert %{
@@ -19,10 +19,8 @@ defmodule PostexWeb.PostsControllerTest do
     end
 
     test "GET /posts/:id doesnt find a post with invalid id", %{conn: conn} do
-      created_post = post(conn, "/posts", %{"content" => "This a test!"}) |> json_response(201)
-
       resp =
-        get(conn, "/posts/#{created_post["post_id"] + 1}")
+        get(conn, "/posts/960b3ae7-2408-4150-8d2a-8babd87a6863")
         |> json_response(404)
 
       assert resp == %{"error" => "Post not found!"}
@@ -32,25 +30,32 @@ defmodule PostexWeb.PostsControllerTest do
          %{conn: conn} do
       created_post = post(conn, "/posts", %{"content" => "This a test!"}) |> json_response(201)
 
+      random_likes = "#{:rand.uniform(5000)}"
+      random_shares = "#{:rand.uniform(5000)}"
+
       resp =
-        put(conn, "/posts/#{created_post["post_id"]}", %{"likes" => "123", "shares" => "201"})
+        put(conn, "/posts/#{created_post["id"]}", %{
+          "likes" => random_likes,
+          "shares" => random_shares
+        })
         |> json_response(200)
 
       assert %{
                "content" => "This a test!",
                "edited" => false,
                "id" => _,
-               "likes" => 123,
-               "shares" => 201
+               "likes" => _random_likes,
+               "shares" => _random_shares
              } = resp
     end
 
     test "PUT or PATCH /posts/:id doesnt find a post with invalid id",
          %{conn: conn} do
-      created_post = post(conn, "/posts", %{"content" => "This a test!"}) |> json_response(201)
-
       resp =
-        put(conn, "/posts/#{created_post["post_id"] + 1}", %{"likes" => "123", "shares" => "201"})
+        put(conn, "/posts/960b3ae7-2408-4150-8d2a-8babd87a6863", %{
+          "likes" => "123",
+          "shares" => "201"
+        })
         |> json_response(404)
 
       assert resp == %{"error" => "Post not found!"}
@@ -61,7 +66,7 @@ defmodule PostexWeb.PostsControllerTest do
       created_post = post(conn, "/posts", %{"content" => "This a test!"}) |> json_response(201)
 
       resp =
-        get(conn, "/posts/#{created_post["post_id"]}/edit", %{"content" => "This is a drill!"})
+        get(conn, "/posts/#{created_post["id"]}/edit", content: "This is a drill!")
         |> json_response(200)
 
       assert %{
@@ -75,10 +80,10 @@ defmodule PostexWeb.PostsControllerTest do
 
     test "GET /posts/:id/edit doesnt find a post with invalid id",
          %{conn: conn} do
-      created_post = post(conn, "/posts", %{"content" => "This a test!"}) |> json_response(201)
-
       resp =
-        get(conn, "/posts/#{created_post["post_id"] + 1}/edit", %{"content" => "This is a drill!"})
+        get(conn, "/posts/960b3ae7-2408-4150-8d2a-8babd87a6863/edit", %{
+          "content" => "This is a drill!"
+        })
         |> json_response(404)
 
       assert resp == %{"error" => "Post not found!"}
@@ -89,7 +94,7 @@ defmodule PostexWeb.PostsControllerTest do
       created_post = post(conn, "/posts", %{"content" => "This a test!"}) |> json_response(201)
 
       resp =
-        delete(conn, "/posts/#{created_post["post_id"]}")
+        delete(conn, "/posts/#{created_post["id"]}")
         |> json_response(200)
 
       assert resp == %{"message" => "Post was deleted!"}
@@ -97,25 +102,26 @@ defmodule PostexWeb.PostsControllerTest do
 
     test "DELETE /posts/:id doesnt find a post with invalid id",
          %{conn: conn} do
-      created_post = post(conn, "/posts", %{"content" => "This a test!"}) |> json_response(201)
-
       resp =
-        delete(conn, "/posts/#{created_post["post_id"] + 1}")
+        delete(conn, "/posts/960b3ae7-2408-4150-8d2a-8babd87a6863")
         |> json_response(404)
 
       assert resp == %{"error" => "Post not found!"}
     end
   end
 
-  describe "HTTP request tests that doesnt depend on id" do
+  describe "HTTP request tests that doesnt depend on id - " do
     test "POST /posts creates a post with valid data", %{conn: conn} do
       resp =
         post(conn, "/posts", %{"content" => "This is a test post!"})
         |> json_response(201)
 
       assert %{
-               "message" => "Post was created!",
-               "post_id" => _id
+               "content" => "This is a test post!",
+               "edited" => false,
+               "id" => _,
+               "likes" => 0,
+               "shares" => 0
              } = resp
     end
 
