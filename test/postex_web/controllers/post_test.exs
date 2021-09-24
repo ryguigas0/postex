@@ -3,14 +3,14 @@ defmodule PostexWeb.PostsControllerTest do
 
   describe "HTTP request tests that depends on id - " do
     test "GET /posts/:id finds a post with valid id", %{conn: conn} do
-      created_post = post(conn, "/posts", content: "This a test!") |> json_response(201)
+      created_post = create_post(conn, "This is a test!")
 
       resp =
         get(conn, "/posts/#{created_post["id"]}")
         |> json_response(200)
 
       assert %{
-               "content" => "This a test!",
+               "content" => "This is a test!",
                "edited" => false,
                "id" => _,
                "likes" => 0,
@@ -28,7 +28,7 @@ defmodule PostexWeb.PostsControllerTest do
 
     test "PUT or PATCH /posts/:id finds a post with valid id and updates its likes and shares values with valid data",
          %{conn: conn} do
-      created_post = post(conn, "/posts", %{"content" => "This a test!"}) |> json_response(201)
+      created_post = create_post(conn, "This is a test!")
 
       random_likes = "#{:rand.uniform(5000)}"
       random_shares = "#{:rand.uniform(5000)}"
@@ -41,7 +41,7 @@ defmodule PostexWeb.PostsControllerTest do
         |> json_response(200)
 
       assert %{
-               "content" => "This a test!",
+               "content" => "This is a test!",
                "edited" => false,
                "id" => _,
                "likes" => _random_likes,
@@ -63,7 +63,7 @@ defmodule PostexWeb.PostsControllerTest do
 
     test "GET /posts/:id/edit finds a post with valid id and updates its content",
          %{conn: conn} do
-      created_post = post(conn, "/posts", %{"content" => "This a test!"}) |> json_response(201)
+      created_post = create_post(conn, "This is a test!")
 
       resp =
         get(conn, "/posts/#{created_post["id"]}/edit", content: "This is a drill!")
@@ -91,7 +91,7 @@ defmodule PostexWeb.PostsControllerTest do
 
     test "DELETE /posts/:id finds a post with a valid id and deletes it",
          %{conn: conn} do
-      created_post = post(conn, "/posts", %{"content" => "This a test!"}) |> json_response(201)
+      created_post = create_post(conn, "This is a test!")
 
       resp =
         delete(conn, "/posts/#{created_post["id"]}")
@@ -112,9 +112,7 @@ defmodule PostexWeb.PostsControllerTest do
 
   describe "HTTP request tests that doesnt depend on id - " do
     test "POST /posts creates a post with valid data", %{conn: conn} do
-      resp =
-        post(conn, "/posts", %{"content" => "This is a test post!"})
-        |> json_response(201)
+      resp = create_post(conn, "This is a test post!")
 
       assert %{
                "content" => "This is a test post!",
@@ -132,5 +130,57 @@ defmodule PostexWeb.PostsControllerTest do
 
       assert resp == %{"error" => "Invalid data provided!"}
     end
+
+    test "GET /posts with a size n and a rule returns a list of n posts based on the rule", %{
+      conn: conn
+    } do
+      expected_resp =
+        Enum.map(
+          # Prepares 20 posts to be created
+          1..20,
+          fn _n ->
+            # Creates the posts
+            create_post(conn, "This is a test!")
+            # Gets the id for updates
+            |> Map.get("id")
+          end
+        )
+        |> Enum.map(fn id ->
+          random_likes = "#{:rand.uniform(5000)}"
+          random_shares = "#{:rand.uniform(5000)}"
+
+          # Updates the likes and shares values
+          put(conn, "/posts/#{id}", %{
+            "likes" => random_likes,
+            "shares" => random_shares
+          })
+          |> json_response(200)
+        end)
+        |> Enum.sort_by(
+          # Useless mapper function
+          fn n -> n end,
+          # Sorts like it should
+          fn pa, pb -> pa["likes"] >= pb["likes"] end
+        )
+        # Takes the batch size
+        |> Enum.take(10)
+
+      resp = get(conn, "/posts", size: 10, rule: "likes") |> json_response(200)
+
+      assert resp === expected_resp
+    end
+
+    test "GET /posts with a size 0 or when no posts are found", %{
+      conn: conn
+    } do
+      resp = get(conn, "/posts", size: 0, rule: "likes") |> json_response(200)
+
+      assert resp === %{"message" => "No posts found!"}
+    end
+  end
+
+  defp create_post(conn, content) do
+    post(conn, "/posts", %{"content" => content})
+    |> json_response(201)
   end
 end

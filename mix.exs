@@ -10,6 +10,8 @@ defmodule Postex.MixProject do
       compilers: [:phoenix, :gettext] ++ Mix.compilers(),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
+      test_coverage: [tool: ExCoveralls],
+      preferred_cli_env: [coveralls: :test],
       deps: deps()
     ]
   end
@@ -43,7 +45,8 @@ defmodule Postex.MixProject do
       {:gettext, "~> 0.11"},
       {:jason, "~> 1.0"},
       {:plug_cowboy, "~> 2.0"},
-      {:credo, "~> 1.5", only: [:dev, :test], runtime: false}
+      {:credo, "~> 1.5", only: [:dev, :test], runtime: false},
+      {:excoveralls, "~> 0.10", only: :test}
     ]
   end
 
@@ -58,7 +61,7 @@ defmodule Postex.MixProject do
       setup: ["deps.get", "ecto.setup"],
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
-      test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"]
+      test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],
       # RESET TEST TABLES: MIX_ENV=test mix ecto.reset
     ]
   end

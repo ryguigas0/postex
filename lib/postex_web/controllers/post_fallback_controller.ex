@@ -17,7 +17,7 @@ defmodule PostexWeb.PostFallbackController do
     |> render("post404.json")
   end
 
-  def call(conn, {:error, :no_post}) do
+  def call(conn, {:error, :no_posts}) do
     conn
     |> put_status(200)
     |> json(%{
