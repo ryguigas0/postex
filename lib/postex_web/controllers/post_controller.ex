@@ -1,7 +1,7 @@
 defmodule PostexWeb.PostsController do
   use PostexWeb, :controller
 
-  action_fallback PostexWeb.PostFallbackController
+  action_fallback PostexWeb.FallbackController
 
   alias PostexWeb.PostView
 

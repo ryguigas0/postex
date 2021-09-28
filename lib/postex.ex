@@ -8,10 +8,15 @@ defmodule Postex do
   """
   alias Postex.Posts.{Create, Delete, Edit, Update, Show, GetPosts}
 
-  defdelegate create_post(params), to: Create, as: :call
+  defdelegate create_post(content), to: Create, as: :call
   defdelegate show_post(post_id), to: Show, as: :call
   defdelegate delete_post(post_id), to: Delete, as: :call
   defdelegate update_post(post_id, updates), to: Update, as: :call
   defdelegate edit_post(post_id, edits), to: Edit, as: :call
   defdelegate get_posts(size, rule), to: GetPosts, as: :call
+
+
+  alias Postex.Users.{Create, Show}
+  defdelegate create_user(params), to: Create, as: :call
+  defdelegate show_user(user_id), to: Show, as: :call
 end

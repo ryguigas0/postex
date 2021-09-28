@@ -12,6 +12,14 @@ defmodule PostexWeb.Router do
     # verbo "/recurso", Controller, :handler
     get "/hello", HelloController, :index
 
+    resources "/users", UserController,
+      only: [
+        :create,
+        :show,
+        # :delete,
+        # :edit
+      ]
+
     resources "/posts", PostsController,
       only: [
         :create,

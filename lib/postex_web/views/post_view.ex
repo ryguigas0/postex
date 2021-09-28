@@ -3,15 +3,7 @@ defmodule PostexWeb.PostView do
 
   use PostexWeb, :view
 
-  def render("show.json", %{post: %Post{} = post}) do
-    %{
-      content: post.content,
-      likes: post.likes,
-      shares: post.shares,
-      id: post.id,
-      edited: post.edited
-    }
-  end
+  def render("show.json", %{post: %Post{} = post}), do: post
 
   def render("show_many.json", %{post_list: post_list}) do
     Enum.map(post_list, fn p -> render("show.json", %{post: p}) end)

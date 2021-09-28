@@ -1,4 +1,4 @@
-defmodule PostexWeb.PostFallbackController do
+defmodule PostexWeb.FallbackController do
   use PostexWeb, :controller
 
   alias PostexWeb.ErrorView
@@ -7,14 +7,14 @@ defmodule PostexWeb.PostFallbackController do
     conn
     |> put_status(400)
     |> put_view(ErrorView)
-    |> render("post400.json")
+    |> render("400.json")
   end
 
   def call(conn, {:error, :not_found}) do
     conn
     |> put_status(404)
     |> put_view(ErrorView)
-    |> render("post404.json")
+    |> render("404.json")
   end
 
   def call(conn, {:error, :no_posts}) do
